@@ -211,10 +211,12 @@ $items = getCartItems($idUser);
 
       <div class="d-flex align-items-center gap-3">
         <!-- Tombol Cart dengan nama -->
-        <button id="openCartBtn" class="btn btn-primary btn-lg d-flex align-items-center gap-2" title="Lihat Keranjang">
-          <i class="bi bi-cart3 fs-4"></i> 
-          <span><?php echo htmlspecialchars($username) ?></span>
-        </button>
+        <?php if ($role == 'User'): ?>
+          <button id="openCartBtn" class="btn btn-primary btn-lg d-flex align-items-center gap-2" title="Lihat Keranjang">
+            <i class="bi bi-cart3 fs-4"></i> 
+            <span><?php echo htmlspecialchars($username) ?></span>
+          </button>
+        <?php endif; ?>
 
         <!-- Logout -->
         <a href="../controller/prosesLogout.php" class="btn btn-light text-primary">Logout</a>

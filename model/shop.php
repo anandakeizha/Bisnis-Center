@@ -136,4 +136,6 @@
         $stmt->bind_param("ii", $idUser, $kodeBarang);
         $stmt->execute();
     }
+
+    
 ?>
