@@ -137,5 +137,30 @@
         $stmt->execute();
     }
 
-    
+    function getPesananByUser($idUser) {
+        $conn = koneksi();
+
+        $sql = "SELECT * FROM pesanan WHERE Id_User = ? ORDER BY Tanggal DESC";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        return $stmt->get_result();  // wajib return hasil query
+    }
+
+    function getDetailPesanan($idPesanan) {
+        $conn = koneksi();
+
+        $sql = "SELECT * FROM detailpesanan WHERE idPesanan = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $stmt->bind_param("i", $idPesanan);
+        $stmt->execute();
+        return $stmt->get_result();  // wajib return hasil query
+    }
+
 ?>

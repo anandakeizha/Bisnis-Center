@@ -3,58 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SignUp</title>
+  <title>Sign Up</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     body {
-        background-color: #0d6efd;
-        color: white;
-        height: 100vh;
-        display: flex;
+      background-color: #0d6efd;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
     }
 
     .form-container {
-        border-radius: 50px;
-        color: #000;
-        padding: 50px;
-        background-color: white;
-        width: 500px;
-        height: 600px;
-        color: white;
-        margin-top: 220px;
-        margin-left: 150px;
+      background-color: white;
+      color: #000;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .img-section {
+      text-align: center;
+    }
+
+    .img-section h2 {
+      margin-bottom: 30px;
+      color: #fff;
+    }
+
+    .img-section img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .img-section h2 {
+        font-size: 1.5rem;
+        margin-top: 20px;
+      }
+
+      .form-container {
+        margin-top: 20px;
+      }
     }
   </style>
 </head>
 <body>
-    <div class="d-flex">
-        <div class="form-container text-dark">
-            <form method="post" action="../controller/prosesLogin.php">
-                <h2 class="mb-4 text-left display-5 fw-bold">Let's to Start!</h2>
-                <p class="mb-5">Create your account and start explore!</p>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username:</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" required>
-                </div>
-                <div class="mb-2">
-                    <label for="password" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
-                </div>
-                <p class="mb-5">have an account? <a href="loginUser.php" class="text-primary">Login.</a></P>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </div>
-            </form>
+  <div class="container">
+    <div class="row align-items-center justify-content-center g-4">
+      <!-- Form -->
+      <div class="col-lg-6">
+        <div class="form-container">
+          <form method="post" action="../controller/prosesSignup.php">
+            <h2 class="mb-3 fw-bold">Let's Start!</h2>
+            <p class="mb-4">Create your account and start exploring!</p>
+
+            <div class="mb-3">
+              <label for="nama" class="form-label">Nama:</label>
+              <input type="text" class="form-control" id="nama" name="nama" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="kelas" class="form-label">Kelas:</label>
+              <input type="text" class="form-control" id="kelas" name="kelas" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="username" class="form-label">Username:</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="telepon" class="form-label">Telepon:</label>
+              <input type="text" class="form-control" id="telepon" name="telepon" required>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Password:</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <p class="mb-3">Already have an account? <a href="loginUser.php" class="text-primary">Login</a></p>
+
+            <div class="d-grid">
+              <button type="submit" name="register" class="btn btn-primary">Sign Up</button>
+            </div>
+          </form>
         </div>
-        <div class="img">
-            <h2 class="text-center display-5" style="margin-top: 200px; margin-left: 120px;">Come in to our Bisnis Center!</h2>
-            <img src="../asset/student.png" style="width: 800px; margin-top: 40px; margin-left: 150px;">
-        </div>
+      </div>
+
+      <!-- Gambar -->
+      <div class="col-lg-6 img-section">
+        <h2 class="display-6 fw-bold">Come into our Business Center!</h2>
+        <img src="../asset/student.png" alt="Student Illustration">
+      </div>
     </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

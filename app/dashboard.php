@@ -3,7 +3,7 @@ session_start();
 require_once '../model/shop.php';
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
+    header("Location: loginUser.php");
     exit;
 }
 $username = $_SESSION['username'];
@@ -206,6 +206,11 @@ $items = getCartItems($idUser);
                 <a class="nav-link text-white" href="shop.php">Shop</a>
             </li>    
           <?php endif; ?>
+          <?php if ($role == 'User'): ?>
+            <li class="nav-item mx-3">
+                <a class="nav-link text-white" href="riwayatPesanan.php">History </a>
+            </li>    
+          <?php endif; ?>
         </ul>
       </div>
 
@@ -269,7 +274,7 @@ $items = getCartItems($idUser);
       <?php endif; ?>
     </div>
 
-    <a href="" class="btn btn-primary btn-lg" id="checkoutBtn" aria-label="Lanjutkan ke pembayaran">Checkout</a>
+    <a href="../controller/checkout.php" class="btn btn-primary btn-lg" id="checkoutBtn" aria-label="Lanjutkan ke pembayaran">Checkout</a>
   </div>
 
   <script>
