@@ -33,6 +33,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $items = getCartItems($idUser);
+
+if ($role == 'Kasir'){
+  $pesananPending = getPesananPending();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'];
+    $action = $_POST['action'];
+
+    if ($action == 'Accept') {
+        $status = 'Accept';
+        echo "<script>
+                alert('Pesanan di Setujui!');
+                window.location.href = 'dashboard.php';
+              </script>";
+    } elseif ($action == 'Cancel') {
+        $status = 'Cancel';
+        echo "<script>
+                alert('Pesanan Sudah di Tolak!');
+                window.location.href = 'dashboard.php';
+              </script>";
+    } else {
+        $status = null;
+    }
+
+    if ($status !== null) {
+        // Update status pesanan
+        getUbahStatusPesanan($id, $status);
+
+        // Jika statusnya Accept, kurangi stok
+        if ($status === 'Accept') {
+            kurangiStok($id);
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -228,6 +264,40 @@ $items = getCartItems($idUser);
       </div>
     </div>
   </nav>
+
+<?php if ($role == 'Kasir'): ?>
+    <div class="container mt-4">
+        <h4 class="mb-3 text-primary">Daftar Pesanan Pending</h4>
+        
+        <?php while ($row = $pesananPending->fetch_assoc()): ?>
+            <div class="card shadow-sm mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="mb-2 mb-md-0">
+                        <span class="badge bg-primary me-2">#<?= $row['ID'] ?></span>
+                        <strong>Status:</strong> 
+                        <span class="text-dark"><?= $row['Status'] ?></span>
+                    </div>
+                    
+                    <div>
+                        <form method="POST" class="d-inline">
+                            <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                            <button type="submit" name="action" value="Accept" class="btn btn-success btn-sm me-2">
+                                <i class="bi bi-check-circle"></i> Accept
+                            </button>
+                        </form>
+
+                        <form method="POST" class="d-inline">
+                            <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                            <button type="submit" name="action" value="Cancel" class="btn btn-danger btn-sm">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+<?php endif; ?>
 
   <!-- Overlay untuk klik diluar sidebar -->
   <div id="overlay" tabindex="-1"></div>

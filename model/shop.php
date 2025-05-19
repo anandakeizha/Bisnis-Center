@@ -163,4 +163,71 @@
         return $stmt->get_result();  // wajib return hasil query
     }
 
+    function getPesananPending() {
+        $conn = koneksi();
+
+        $sql = "SELECT * FROM pesanan WHERE Status = 'Pending'";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->execute();
+        return $stmt->get_result();  // wajib return hasil query
+    }
+
+    function getUbahStatusPesanan($idPesanan, $statusBaru) {
+        $conn = koneksi();
+
+        $sql = "UPDATE pesanan SET status = ? WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("si", $statusBaru, $idPesanan);
+        $stmt->execute();
+
+    }
+
+   function kurangiStok($idPesanan) {
+    $conn = koneksi();
+
+    // Ambil detail pesanan
+    $result = getDetailPesanan($idPesanan);
+
+    if (!$result) {
+        die("Gagal mengambil detail pesanan.");
+    }
+
+    while ($row = $result->fetch_assoc()) {
+        $kodeBarang = $row['KodeBarang'];
+        $jumlah = (int)$row['Jumlah'];
+
+        // Ambil stok sekarang
+        $sqlCek = "SELECT Stock FROM barang WHERE KodeBarang = ?";
+        $stmtCek = $conn->prepare($sqlCek);
+        $stmtCek->bind_param("s", $kodeBarang);
+        $stmtCek->execute();
+        $stmtCek->bind_result($stokSekarang);
+        $stmtCek->fetch();
+        $stmtCek->close();
+
+        // Hitung stok baru, jangan sampai negatif
+        $stokBaru = max(0, $stokSekarang - $jumlah);
+
+        // Update stok
+        $sqlUpdate = "UPDATE barang SET Stock = ? WHERE KodeBarang = ?";
+        $stmtUpdate = $conn->prepare($sqlUpdate);
+        if (!$stmtUpdate) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $stmtUpdate->bind_param("is", $stokBaru, $kodeBarang);
+        $stmtUpdate->execute();
+        $stmtUpdate->close();
+    }
+}
+
+
+
 ?>
