@@ -5,8 +5,7 @@ if (!isset($_SESSION['username'])) {
   header("Location: loginUser.php");
   exit;
 }
-
-$result  = getProduk();
+$result  = getProdukMenipis();
 ?>
 
 <!DOCTYPE html>
@@ -15,9 +14,8 @@ $result  = getProduk();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BC - Shop</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
     body {
       background-color: #0d6efd;
@@ -107,16 +105,15 @@ $result  = getProduk();
     }
   </style>
 </head>
-<body class="mb-2 bg-primary text-white">
+<body>
   <div class="container py-4">
-    <h2 class="text-center fw-bold mb-4">Our Shop</h2>
     <div class="row g-4">
       <?php while ($row = $result->fetch_assoc()): ?>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <div class="card shadow-sm h-100">
             <!-- Badge stok -->
-            <span class="badge <?= $row['Stock'] > 0 ? 'bg-success' : 'bg-danger' ?> stock-badge">
-              <?= $row['Stock'] > 0 ? 'Tersedia' : 'Stok Habis' ?>
+            <span class="badge <?= $row['Stock'] <= 1 ? 'bg-danger' : 'bg-warning' ?> stock-badge">
+              <?= $row['Stock'] >= 1 ? 'Stcok Menipis' : 'Stok Habis' ?>
             </span>
 
             <img src="data:image/jpeg;base64,<?= base64_encode($row['gambar']) ?>"
@@ -129,16 +126,16 @@ $result  = getProduk();
               <p class="card-text">Rp <?= number_format($row['HargaBarang'], 0, ',', '.') ?></p>
             </div>
 
-            <?php if ($role == 'User' && $row['Stock'] > 0): ?>
+            <?php if ($role == 'Kasir' && $row['Stock'] <= 5): ?>
               <div class="card-hover">
-                <form action="../controller/addcart.php" method="post">
+                <form action="../controller/addrestock.php" method="post">
                   <input type="hidden" name="idUser" value="<?= $idUser ?>">
                   <input type="hidden" name="kodeBarang" value="<?= $row['KodeBarang'] ?>">
                   <div class="mb-2">
-                    <input type="number" name="jumlah" class="form-control form-control-sm" value="1" min="1" max="<?= $row['Stock'] ?>">
+                    <input type="number" name="jumlah" class="form-control form-control-sm" value="1" min="1">
                   </div>
                   <button type="submit" class="btn btn-cart btn-sm w-100">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
+                    <i class="bi bi-cart-plus"></i> Restock
                   </button>
                 </form>
               </div>
@@ -148,5 +145,6 @@ $result  = getProduk();
       <?php endwhile; ?>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -2,19 +2,13 @@
 require_once'../model/shop.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get POST data
-    // $idUser = $_POST['idUser'];  // Ideally get the user ID from the session
-    $idUser = $_POST['idUser']; // Hardcoded user ID for now, you can retrieve from session
+
     $kodeBarang = $_POST['kodeBarang'];
     $jumlah = $_POST['jumlah'];
+    $status = "Pending";
+    $pesan = "Saya membutuhkan barang dengan kode barang $kodeBarang sebanyak $jumlah";
 
-    // Validate input
-    if (empty($idUser) || empty($kodeBarang) || empty($jumlah)) {
-        echo "All fields are required!";
-        return;
-    }
-
-    if (addToCart($kodeBarang, $idUser, $jumlah)) {
+    if (addPesan($kodeBarang,$pesan, $jumlah, $status)) {
         echo "<script>
                 alert('Item successfully added to cart!');
                 window.location.href = '../app/dashboard.php';

@@ -191,43 +191,123 @@
     }
 
    function kurangiStok($idPesanan) {
-    $conn = koneksi();
+        $conn = koneksi();
 
-    // Ambil detail pesanan
-    $result = getDetailPesanan($idPesanan);
+        // Ambil detail pesanan
+        $result = getDetailPesanan($idPesanan);
 
-    if (!$result) {
-        die("Gagal mengambil detail pesanan.");
+        if (!$result) {
+            die("Gagal mengambil detail pesanan.");
+        }
+
+        while ($row = $result->fetch_assoc()) {
+            $kodeBarang = $row['KodeBarang'];
+            $jumlah = (int)$row['Jumlah'];
+
+            // Ambil stok sekarang
+            $sqlCek = "SELECT Stock FROM barang WHERE KodeBarang = ?";
+            $stmtCek = $conn->prepare($sqlCek);
+            $stmtCek->bind_param("s", $kodeBarang);
+            $stmtCek->execute();
+            $stmtCek->bind_result($stokSekarang);
+            $stmtCek->fetch();
+            $stmtCek->close();
+
+            // Hitung stok baru, jangan sampai negatif
+            $stokBaru = max(0, $stokSekarang - $jumlah);
+
+            // Update stok
+            $sqlUpdate = "UPDATE barang SET Stock = ? WHERE KodeBarang = ?";
+            $stmtUpdate = $conn->prepare($sqlUpdate);
+            if (!$stmtUpdate) {
+                die("Prepare failed: " . $conn->error);
+            }
+            $stmtUpdate->bind_param("is", $stokBaru, $kodeBarang);
+            $stmtUpdate->execute();
+            $stmtUpdate->close();
+        }
     }
 
-    while ($row = $result->fetch_assoc()) {
-        $kodeBarang = $row['KodeBarang'];
-        $jumlah = (int)$row['Jumlah'];
 
-        // Ambil stok sekarang
-        $sqlCek = "SELECT Stock FROM barang WHERE KodeBarang = ?";
-        $stmtCek = $conn->prepare($sqlCek);
-        $stmtCek->bind_param("s", $kodeBarang);
-        $stmtCek->execute();
-        $stmtCek->bind_result($stokSekarang);
-        $stmtCek->fetch();
-        $stmtCek->close();
+    function getProdukMenipis(){
+        $conn = koneksi();
+        $result = $conn->query("SELECT * FROM barang where Stock <= 5");
+        return $result;
+    }
 
-        // Hitung stok baru, jangan sampai negatif
-        $stokBaru = max(0, $stokSekarang - $jumlah);
 
-        // Update stok
-        $sqlUpdate = "UPDATE barang SET Stock = ? WHERE KodeBarang = ?";
-        $stmtUpdate = $conn->prepare($sqlUpdate);
-        if (!$stmtUpdate) {
+    function getPesanPending() {
+        $conn = koneksi();
+
+        $sql = "SELECT * FROM pesan WHERE Status = 'Pending'";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
             die("Prepare failed: " . $conn->error);
         }
-        $stmtUpdate->bind_param("is", $stokBaru, $kodeBarang);
-        $stmtUpdate->execute();
-        $stmtUpdate->close();
+
+        $stmt->execute();
+        return $stmt->get_result();  // wajib return hasil query
     }
-}
 
+    function getUbahStatusPesan($idPesanan, $statusBaru) {
+        $conn = koneksi();
 
+        $sql = "UPDATE pesan SET status = ? WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("si", $statusBaru, $idPesanan);
+        $stmt->execute();
+
+    }
+
+    function addPesan($kodeBarang, $pesan, $jumlah, $status){
+        $conn = koneksi();
+        $stmt = $conn->prepare("INSERT INTO pesan (KodeBarang, Pesan, Jumlah, Status) 
+                VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("isis", $kodeBarang, $pesan, $jumlah, $status);
+            return $stmt->execute();
+    }
+
+    function getPesan($idPesanan) {
+        $conn = koneksi();
+
+        $sql = "SELECT * FROM pesan WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $stmt->bind_param("i", $idPesanan);
+        $stmt->execute();
+        return $stmt->get_result();  // wajib return hasil query
+    }
+
+    function TambahStok($idPesanan) {
+        $conn = koneksi();
+
+        getPesan($idPesanan);
+
+        $sql = "SELECT KodeBarang, Jumlah FROM pesan WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $idPesanan);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            die("Data pesanan tidak ditemukan.");
+        }
+
+        $row = $result->fetch_assoc();
+        $kodeBarang = $row['KodeBarang'];
+        $jumlah = $row['Jumlah'];
+
+        // Tambah ke stok barang
+        $sqlUpdateStok = "UPDATE barang SET stock = stock + ? WHERE kodebarang = ?";
+        $stmtStok = $conn->prepare($sqlUpdateStok);
+        $stmtStok->bind_param("is", $jumlah, $kodeBarang);
+        $stmtStok->execute();
+    }
 
 ?>

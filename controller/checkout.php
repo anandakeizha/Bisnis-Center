@@ -45,14 +45,8 @@ $deleteCart = $conn->prepare("DELETE FROM cart WHERE IdUser = ?");
 $deleteCart->bind_param("i", $idUser);
 $deleteCart->execute();
 
-// Redirect atau notifikasi
-// echo "<script>
-//         alert('Checkout berhasil!');
-//         window.location.href = '../app/riwayatPesanan.php';
-//       </script>";
-
 echo "<script>
         alert('Checkout berhasil!');
-        window.location.href = '../app/shop.php';
+        window.location.href = '../app/dashboard.php';
       </script>";
 ?>
