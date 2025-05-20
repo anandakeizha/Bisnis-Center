@@ -43,6 +43,7 @@ $values = json_encode(array_values($data));
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Penjualan</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -54,33 +55,34 @@ $values = json_encode(array_values($data));
         h2 {
             text-align: center;
             color: #333;
+            margin-top: 20px;
         }
 
         form {
-        display: block;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         form label {
-            display: inline-block;
-            margin: 0 10px;
             font-weight: bold;
         }
 
-        form input[type="date"] {
-            padding: 5px 10px;
+        form input[type="date"], form button {
+            padding: 8px 12px;
             border: 1px solid #ccc;
             border-radius: 6px;
+            font-size: 16px;
         }
 
         form button {
-            padding: 6px 14px;
-            border: none;
             background-color: #3498db;
             color: white;
-            border-radius: 6px;
+            border: none;
             cursor: pointer;
         }
 
@@ -88,6 +90,29 @@ $values = json_encode(array_values($data));
             background-color: #2980b9;
         }
 
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            form input[type="date"], form button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -120,6 +145,8 @@ $values = json_encode(array_values($data));
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -133,6 +160,11 @@ $values = json_encode(array_values($data));
                         display: true,
                         text: 'Produk'
                     }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
                 }
             }
         }

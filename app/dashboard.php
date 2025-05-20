@@ -407,29 +407,30 @@ if ($role == 'Admin'){
         
         <?php while ($row = $pesananPending->fetch_assoc()): ?>
           <div class="card shadow-sm mb-3">
-            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-              <div class="mb-2 mb-md-0">
-                <span class="badge bg-primary me-2">#<?= $row['ID'] ?></span>
-                <strong>Status:</strong> 
-                <span class="text-dark"><?= $row['Status'] ?></span>
-                <strong>Total:</strong> 
-                <span class="text-dark"><?= $row['Total'] ?></span>
-              </div>
-              
-              <div>
-                <form method="POST" class="d-inline">
-                  <input type="hidden" name="id" value="<?= $row['ID'] ?>">
-                  <button type="submit" name="action" value="Accept" class="btn btn-success btn-sm me-2">
-                    <i class="bi bi-check-circle"></i> Accept
-                  </button>
-                </form>
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8 mb-3 mb-md-0">
+                  <span class="badge bg-primary me-2">#<?= $row['ID'] ?></span>
+                  <strong>Status:</strong>
+                  <span class="text-dark me-3"><?= $row['Status'] ?></span>
+                  <strong>Total:</strong>
+                  <span class="text-dark"><?= $row['Total'] ?></span>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <form method="POST" class="d-inline">
+                    <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                    <button type="submit" name="action" value="Accept" class="btn btn-success btn-sm me-2 mb-1">
+                      <i class="bi bi-check-circle"></i> Accept
+                    </button>
+                  </form>
 
-                <form method="POST" class="d-inline">
-                  <input type="hidden" name="id" value="<?= $row['ID'] ?>">
-                  <button type="submit" name="action" value="Cancel" class="btn btn-danger btn-sm">
-                    <i class="bi bi-x-circle"></i> Cancel
-                  </button>
-                </form>
+                  <form method="POST" class="d-inline">
+                    <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                    <button type="submit" name="action" value="Cancel" class="btn btn-danger btn-sm mb-1">
+                      <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
@@ -437,32 +438,34 @@ if ($role == 'Admin'){
       </div>
     <?php endif; ?>
 
+
     <?php if ($role == 'Admin'): ?>
       <div class="container mt-4">
         <h4 class="mb-3 text-primary">Daftar Pesan Pending</h4>
         
         <?php while ($row = $pesanPending->fetch_assoc()): ?>
           <div class="card shadow-sm mb-3">
-            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-              <div class="mb-2 mb-md-0">
-                <span class="badge bg-primary me-2">#<?= $row['ID'] ?></span>
-                <span class="text-dark"><?= $row['Pesan'] ?></span>
-              </div>
-              
-              <div>
-                <form method="POST" class="d-inline">
-                  <input type="hidden" name="id" value="<?= $row['ID'] ?>">
-                  <button type="submit" name="Aksi" value="Confirm" class="btn btn-success btn-sm me-2">
-                    <i class="bi bi-check-circle"></i> Accept
-                  </button>
-                </form>
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8 mb-3 mb-md-0 text-break">
+                  <span class="badge bg-primary me-2">#<?= $row['ID'] ?></span>
+                  <span class="text-dark"><?= $row['Pesan'] ?></span>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <form method="POST" class="d-inline">
+                    <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                    <button type="submit" name="Aksi" value="Confirm" class="btn btn-success btn-sm me-2 mb-1">
+                      <i class="bi bi-check-circle"></i> Accept
+                    </button>
+                  </form>
 
-                <form method="POST" class="d-inline">
-                  <input type="hidden" name="id" value="<?= $row['ID'] ?>">
-                  <button type="submit" name="Aksi" value="Cancel" class="btn btn-danger btn-sm">
-                    <i class="bi bi-x-circle"></i> Cancel
-                  </button>
-                </form>
+                  <form method="POST" class="d-inline">
+                    <input type="hidden" name="id" value="<?= $row['ID'] ?>">
+                    <button type="submit" name="Aksi" value="Cancel" class="btn btn-danger btn-sm mb-1">
+                      <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
