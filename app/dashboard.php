@@ -363,10 +363,15 @@ if ($role == 'Admin'){
         </a>
       </li>    
       <li class="nav-item">
-        <a class="nav-link text-white" href="#barang">
+        <a class="nav-link text-white" href="#barang  ">
           <i class="bi bi-box-seam"></i> Barang
         </a>
-      </li>    
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="#laporanPenjualan">
+          <i class="bi bi-bar-chart"></i> Laporan Penjualan
+        </a>
+      </li>
     <?php endif; ?>
   </ul>
   
@@ -490,6 +495,9 @@ if ($role == 'Admin'){
     </section>
     <section class="bg-white text-dark py-2" id="barang">
         <?php include 'barang.php'; ?>
+    </section>
+    <section class="bg-white text-dark py-2" id="laporanPenjualan">
+        <?php include 'laporan.php'; ?>
     </section>
   <?php endif; ?>
 

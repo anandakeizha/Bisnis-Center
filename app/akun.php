@@ -1,5 +1,10 @@
 <?php
 require_once '../model/user.php';
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
+  header("Location: loginUser.php");
+  exit;
+}
 $dataAkun = getAllAkunKasirDanAdmin();
 ?>
 

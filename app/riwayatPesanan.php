@@ -1,7 +1,7 @@
 <?php
 require_once '../model/shop.php';
 
-if (!isset($_SESSION['idUser'])) {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'User') {
   header("Location: loginUser.php");
   exit;
 }
