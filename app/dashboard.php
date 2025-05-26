@@ -373,6 +373,11 @@ if ($role == 'Admin'){
         </a>
       </li>
     <?php endif; ?>
+     <li class="nav-item">
+        <a class="nav-link text-white" href="gantipw.php">
+          <i class="bi bi-box-seam"></i> Ganti Password
+        </a>
+      </li>   
   </ul>
   
   <div class="sidebar-footer">

@@ -75,5 +75,25 @@
         return $conn->query($sql);
     }
 
+    function updatePasswordAkun($id, $passwordBaru) {
+        $conn = koneksi();
+        $hash = password_hash($passwordBaru, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE akun SET Password = ? WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $hash, $id);
+        return $stmt->execute();
+    }
+
+    function lupaPasswordAkun($email, $passwordBaru) {
+        $conn = koneksi();
+        $hash = password_hash($passwordBaru, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE akun SET Password = ? WHERE Email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $hash, $email);
+        return $stmt->execute();
+    }
+
     
 ?>

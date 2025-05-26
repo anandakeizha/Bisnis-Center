@@ -43,7 +43,7 @@
           <li class="nav-item mx-2"><a class="nav-link text-white" href="#contact">Contact us</a></li>
         </ul>
         <div class="d-flex">
-          <a href="#" class="btn btn-light me-2 text-primary">Sign Up</a>
+          <a href="signupUser.php" class="btn btn-light me-2 text-primary">Sign Up</a>
           <a href="loginUser.php" class="btn btn-outline-light">Login</a>
         </div>
       </div>
