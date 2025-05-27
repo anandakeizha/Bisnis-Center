@@ -25,6 +25,20 @@
   .nav-link:hover::after {
     width: 100%;
   }
+
+  .header {
+    position: relative;
+    min-height: 500px; /* Atur tinggi sesuai kebutuhan */
+    overflow: hidden;
+  }
+
+  .header .floating-image {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 700px; /* Sesuaikan ukuran gambarnya */
+    max-width: 100%;
+  }
 </style>
 </head>
 <body class="bg-primary text-white">
@@ -43,7 +57,7 @@
           <li class="nav-item mx-2"><a class="nav-link text-white" href="#contact">Contact us</a></li>
         </ul>
         <div class="d-flex">
-          <a href="#" class="btn btn-light me-2 text-primary">Sign Up</a>
+          <a href="signupUser.php" class="btn btn-light me-2 text-primary">Sign Up</a>
           <a href="loginUser.php" class="btn btn-outline-light">Login</a>
         </div>
       </div>
@@ -51,16 +65,16 @@
   </nav>
 
   <!-- Header -->
-  <section class="py-5" id="home">
+  <section class="header py-5" id="home">
     <div class="container">
-      <div class="row align-items-center text-center text-md-start">
+      <div class="row align-items-center text-left" style="margin-top: 100px; margin-left: 100px;">
         <div class="col-md-6">
           <h4>Welcome!</h4>
-          <h1 class="fw-bold display-4">Bisnis Center</h1>
-          <span class="typed-text fw-bold fs-5"></span>
+          <h1 class="fw-bold display-2">Bisnis Center</h1>
+          <span class="typed-text fw-bold"></span>
         </div>
         <div class="col-md-6">
-          <img src="../asset/header_photo.png" alt="Header" class="img-fluid mt-4 mt-md-0">
+          <img src="../asset/header_photo.png" alt="Header" class="floating-image">
         </div>
       </div>
     </div>

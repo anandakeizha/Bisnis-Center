@@ -118,7 +118,7 @@ if ($role == 'Admin'){
       background-color: #f8f9fa;
       transition: padding-left 0.3s;
     }
-    
+
     /* Sidebar styles */
     #mainSidebar {
       position: fixed;
@@ -442,7 +442,7 @@ if ($role == 'Admin'){
     <?php if ($role == 'Admin'): ?>
       <div class="container mt-4">
         <h4 class="mb-3 text-primary">Daftar Pesan Pending</h4>
-        
+
         <?php while ($row = $pesanPending->fetch_assoc()): ?>
           <div class="card shadow-sm mb-3">
             <div class="card-body">

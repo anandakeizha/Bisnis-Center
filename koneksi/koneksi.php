@@ -1,6 +1,6 @@
 <?php
 function koneksi() {
-    $conn =  mysqli_connect("localhost", "root", "", "bisniscenter");
+    $conn =  mysqli_connect("localhost", "root", "", "Bisniscenter");
     if(!$conn){
         echo "Gagal".mysqli_connect_error()."<br>";
     }

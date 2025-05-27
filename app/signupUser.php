@@ -16,13 +16,14 @@
     }
 
     .form-container {
-      background-color: white;
       color: #000;
       border-radius: 20px;
       padding: 40px 30px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
       max-width: 500px;
       width: 100%;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
     }
 
     .img-section {
@@ -91,10 +92,10 @@
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
 
-            <p class="mb-3">Already have an account? <a href="loginUser.php" class="text-primary">Login</a></p>
+            <p class="mb-3">Already have an account? <a href="loginUser.php" class="text-light">Login</a></p>
 
             <div class="d-grid">
-              <button type="submit" name="register" class="btn btn-primary">Sign Up</button>
+              <button type="submit" name="register" class="btn btn-light text-primary">Sign Up</button>
             </div>
           </form>
         </div>
