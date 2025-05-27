@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         echo "<script>
                 alert('Login berhasil!');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/dashboardAdmin.php';
               </script>";
     } else {
         echo "<script>

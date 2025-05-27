@@ -20,10 +20,10 @@ include "../controller/akun.php"
             <tr>
                 <td>ID</td>
                 <td>Username</td>
-                <td>Password</td>
                 <td>Email</td>
                 <td>Telepon</td>
                 <td>Role</td>
+                <td>Aksi</td>
             </tr>
             <?php
                 $koneksi = koneksi();
@@ -37,7 +37,6 @@ include "../controller/akun.php"
                     echo "<tr>";
                     echo "<td>" . $row['ID'] . "</td>";
                     echo "<td>" . $row['Username'] . "</td>";
-                    echo "<td>" . $row['Password'] . "</td>";
                     echo "<td>" . $row['Email'] . "</td>";
                     echo "<td>" . $row['Telepon'] . "</td>";
                     echo "<td>" . $row['Role'] . "</td>";

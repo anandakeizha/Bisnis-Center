@@ -41,37 +41,56 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
+    .sidebar .dropdown-item{
+      background-color: white;
+      color: black;
+    }
+
+    .sidebar .dropdown-menu{
+      border-radius: 25px;
+    }
+
     .dropdown-toggle::after {
       color: white;
     }
+
     </style>
 </head>
 <body>
 <div class="sidebar bg-primary d-flex flex-column p-3">
-    <h4 class="text-white mb-5" style="text-align: center; margin-top: 20px;">Dashboard</h4>
+    <img src="../asset/Logobcputih1.png" class="mb-5 ms-3 align-items-center" style="width: 150px;">
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="dashboardAdmin.php" class="nav-link mb-4">Dashboard</a>
+        <a href="dashboardAdmin.php" class="nav-link mb-4"><i class="bi bi-clipboard-data me-4"></i>Dashboard</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-cash-coin me-4"></i>Transaksi
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="pesanan.php">Pesanan</a></li>
+          <li><a class="dropdown-item" href="detailPesanan.php">Detail Pesanan</a></li>
+        </ul>
       </li>
       <li>
-        <a href="pesanan.php" class="nav-link">Pesanan</a>
+        <a href="dataBarang.php" class="nav-link mt-4"><i class="bi bi-box-seam-fill me-4"></i>Data Barang</a>
       </li>
-      <li>
-        <a href="detailPesanan.php" class="nav-link mt-4">Detail Pesanan</a>
+      <?php
+        if($_SESSION['role'] == "admin"):
+      ?>
+      <li class="nav-item dropdown mt-4">
+        <a class="nav-link dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-file-person-fill me-4"></i>Data Akun
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="akunUser.php">User</a></li>
+          <li><a class="dropdown-item" href="akunKasir.php">Kasir</a></li>
+        </ul>
       </li>
-      <li>
-        <a href="dataBarang.php" class="nav-link mt-4">Data Barang</a>
-      </li>
-      <li>
-        <a href="akunUser.php" class="nav-link mt-4">Akun User</a>
-      </li>
-      <li>
-        <a href="akunKasir.php" class="nav-link mt-4">Akun Kasir</a>
-      </li>
-      <li>
-        <a href="akunAdmin.php" class="nav-link mt-4">Akun Admin</a>
-      </li>
+      <?php endif ?>
+      <a href="loginUser.php" class="btn btn-light text-primary" style="margin-top: 675px;"><i class="bi bi-box-arrow-left color-primary me-2 align-items-center"></i> Logout</a>
     </ul>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
