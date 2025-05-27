@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['idAkun'] = $akun['idAkun'];
         $_SESSION['username'] = $akun['Username'];
         $_SESSION['role'] = $akun['Role'];
+        $_SESSION['email'] = $akun['Email'];
         $_SESSION['idUser'] = $akun['ID'] ?? null;
 
         echo "<script>
