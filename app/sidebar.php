@@ -1,3 +1,7 @@
+<?php
+session_start();
+$role = $_SESSION['role'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,9 +79,7 @@
       <li>
         <a href="dataBarang.php" class="nav-link mt-4"><i class="bi bi-box-seam-fill me-4"></i>Data Barang</a>
       </li>
-      <?php
-        if($_SESSION['role'] == "admin"):
-      ?>
+      <?php if($_SESSION['role'] == "Admin"): ?>
       <li class="nav-item dropdown mt-4">
         <a class="nav-link dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-file-person-fill me-4"></i>Data Akun
@@ -88,8 +90,8 @@
         </ul>
       </li>
       <?php endif ?>
-      <a href="loginUser.php" class="btn btn-light text-primary" style="margin-top: 675px;"><i class="bi bi-box-arrow-left color-primary me-2 align-items-center"></i> Logout</a>
     </ul>
+    <a href="loginUser.php" class="btn btn-light text-primary mt-auto mb-3"><i class="bi bi-box-arrow-left color-primary me-2 align-items-center"></i> Logout</a>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>

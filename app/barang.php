@@ -1,7 +1,12 @@
 <?php
 require_once '../model/barang.php';
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
+if(!isset($_SESSION['role'])){
+    header("Location: loginUser.php");
+    exit();
+}
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] === 'Admin') {
   header("Location: loginUser.php");
   exit;
 }

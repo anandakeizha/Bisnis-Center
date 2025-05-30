@@ -1,6 +1,18 @@
 <?php
+session_start();
+if (!isset($_SESSION['role'])) {
+  header("Location: loginUser.php");
+  exit;
+}
+
+if($_SESSION['role'] == "User"){
+  header("Location: loginUser.php");
+  exit;
+}
+
 include "sidebar.php";
-include "../koneksi/koneksi.php"
+include "../koneksi/koneksi.php";
+include "../controller/akun.php";
 ?>
 
 <?php
@@ -87,7 +99,7 @@ $stok_habis = $data_stok['stok_habis'] ?? 0;
         <div class="col-md-6 mb-4">
           <div class="card shadow border border-0" style="width: 1400px; height: 240px">
             <div class="card-body">
-              <h5 style="text-align: left;"><i class="bi bi-cash-coin me-4"></i> Transaksi Hari ini</h5>
+              <h5 style="text-align: left;"><i class="bi bi-cash-coin me-4"></i> Riwayat Pesanan</h5>
               <table class="table table-hover">
                 <tr>
                   <td>ID</td>

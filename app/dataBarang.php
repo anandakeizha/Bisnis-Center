@@ -1,4 +1,14 @@
 <?php
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: loginUser.php");
+    exit;
+  }
+
+if($_SESSION['role'] == "user"){
+    header("Location: loginUser.php");
+}
+
 include "sidebar.php";
 include "../koneksi/koneksi.php";
 include "../controller/barang.php";
@@ -33,19 +43,23 @@ include "../controller/barang.php";
                     echo "<tr><td colspan='5'>Query Error: " . mysqli_error($koneksi) . "</td></tr>";
                 } elseif (mysqli_num_rows($hasil) > 0) {
                     while ($row = mysqli_fetch_assoc($hasil)) {
-                    echo "<tr>";
-                    echo "<td>" . $row['KodeBarang'] . "</td>";
-                    echo "<td>" . $row['NamaBarang'] . "</td>";
-                    echo "<td><img src='data:image/png;base64," . base64_encode($row['gambar']) . "'/></td>";
-                    echo "<td>" . $row['Stock'] . "</td>";
-                    echo "<td>" . $row['HargaBarang'] . "</td>";
-                    echo "<td>
-                            <button class='btn btn-warning text-white' name='edit'>Edit</button>
-                            <button class='btn btn-danger' name='delete'>Delete</button>";
-                    echo "</td>";
-                }
-                } else {
-                    echo "<tr><td colspan='5'>Tidak ada data</td></tr>";
+                        echo "<tr>";
+                        echo "<td>" . $row['KodeBarang'] . "</td>";
+                        echo "<td>" . $row['NamaBarang'] . "</td>";
+                        echo "<td><img src='data:image/png;base64," . base64_encode($row['gambar']) . "' width='80'/></td>";
+                        echo "<td>" . $row['Stock'] . "</td>";
+                        echo "<td>" . $row['HargaBarang'] . "</td>";
+                        echo "<td>";
+
+                        if ($_SESSION['role'] == "Admin") {
+                            echo "<button class='btn btn-warning text-white me-2' name='edit'>Edit</button>";
+                            echo "<button class='btn btn-danger' name='delete'>Delete</button>";
+                        } else {
+                            echo "-";
+                        }
+                        echo "</td>";
+                        echo "</tr>";
+                    }
                 }
                 ?>
         </table>

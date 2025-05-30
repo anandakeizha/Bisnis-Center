@@ -20,10 +20,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['email'] = $akun['Email'];
         $_SESSION['idUser'] = $akun['ID'] ?? null;
 
-        echo "<script>
-                alert('Login berhasil!');
-                window.location.href = '../app/dashboardAdmin.php';
+        if($akun['Role'] == "User"){
+            echo "<script>
+                    alert('Login berhasil!');
+                    window.location.href = '../app/dashboard.php';
+                </script>";
+        }elseif($akun['Role'] ===  "Admin" || $akun['Role'] === "Kasir"){
+            echo "<script>
+                    alert('Login berhasil!');
+                    window.location.href = '../app/dashboardAdmin.php';
+                </script>";
+        }else{
+            echo "<script>
+                alert('Login gagal. Username atau password salah.');
+                window.history.back();
               </script>";
+        }
+
     } else {
         echo "<script>
                 alert('Login gagal. Username atau password salah.');

@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: loginUser.php");
+    exit;
+  }
+
+if($_SESSION['role'] == "user"):
+  header("Location: loginUser.php");
+endif;
 include "sidebar.php";
 include "../koneksi/koneksi.php"
 ?>

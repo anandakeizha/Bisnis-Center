@@ -1,3 +1,8 @@
+<?php 
+session_start();
+if($_SESSION['role'] == "admin" && $_SESSION['role'] == "kasir")
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +36,7 @@
     }
   </style>
 </head>
+
 <body class="d-flex align-items-center justify-content-center vh-100">
   <div class="container-fluid">
     <div class="row justify-content-center align-items-center">
@@ -54,7 +60,7 @@
               <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
             </div>
             <p>Don't have an account? <a href="signupUser.php" class="text-light">Sign Up.</a>
-            Forget password ? <a href="lupapassword.php" class="text-light">reset password.</a></p>
+            </p>Forget password ? <a href="lupapassword.php" class="text-light">reset password.</a></p>
             <div class="d-grid">
               <button type="submit" class="btn btn-light text-primary">Login</button>
             </div>

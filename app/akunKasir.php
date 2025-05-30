@@ -1,7 +1,17 @@
 <?php
+session_start();
+if (!isset($_SESSION['role'])) {
+    header("Location: loginUser.php");
+    exit;
+  }
+
+if($_SESSION['role'] == "Kasir" && $_SESSION['role'] == "User"){
+    header("Location: loginUser.php");
+    exit();
+}
 include "sidebar.php";
 include "../koneksi/koneksi.php";
-include "../controller/akun.php"
+include "../controller/akun.php";
 ?>
 
 <!DOCTYPE html>
