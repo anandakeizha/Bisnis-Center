@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (addToCart($kodeBarang, $idUser, $jumlah)) {
         echo "<script>
                 alert('Item successfully added to cart!');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/shop.php';
               </script>";
     } else {
         echo "<script>

@@ -11,7 +11,7 @@ if (isset($_POST['tambah'])) {
     $id = tambahAkun($username, $password, $email, $telepon, $role);
     echo "<script>
                 alert('Berhasil Tambah Akun');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/akunAdmin.php';
               </script>";
     exit;
 }
@@ -26,7 +26,7 @@ if (isset($_POST['edit'])) {
     updateAkun($id, $username, $email, $telepon, $role);
     echo "<script>
                 alert('Berhasil Edit Akun');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/akunAdmin.php';
               </script>";
     exit;
 }
@@ -36,7 +36,7 @@ if (isset($_GET['hapus'])) {
     deleteAkun($id);
     echo "<script>
                 alert('Berhasil Delete Akun');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/akunAdmin.php';
               </script>";
     exit;
 }

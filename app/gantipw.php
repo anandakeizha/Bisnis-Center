@@ -5,8 +5,17 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 $id = $_SESSION['idAkun'];
-$email = $_SESSION['email'];
 $username = $_SESSION['username'];
+$role = $_SESSION['role'];
+
+$dashboardLink = '#'; // default
+if ($role == 'Admin') {
+    $dashboardLink = 'dashboardAdmin.php';
+} elseif ($role == 'Kasir') {
+    $dashboardLink = 'dashboardKasir.php';
+} elseif ($role == 'User') {
+    $dashboardLink = 'dashboardUser.php';
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,7 +77,7 @@ $username = $_SESSION['username'];
               <button type="submit" class="btn btn-light text-primary">Update Password</button>
             </div>
 
-            <a href="dashboard.php" class="text-light d-block text-center">← Kembali ke Halaman Sebelumnya</a>
+            <a href="<?= $dashboardLink ?>" class="text-light d-block text-center">← Kembali ke Halaman Sebelumnya</a>
           </form>
         </div>
       </div>

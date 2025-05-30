@@ -1,7 +1,3 @@
-<?php
-session_start();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +45,7 @@ session_start();
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <img src="../asset/Logobcputih1.png" style="width: 150px;">
+      <a class="navbar-brand text-white fw-bold" href="#">Bisnis Center</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -100,8 +96,8 @@ session_start();
     <div class="container">
       <h2 class="text-center text-primary fw-bold">About Us</h2>
       <p class="text-center mt-3">Kami adalah platform yang mendukung fasilitas sekolah agar berkembang secara digital dan profesional.</p>
-      <div class="row align-items-center mt-2">
-        <div class="col-md-6 mb-md-0">
+      <div class="row align-items-center mt-5">
+        <div class="col-md-6 mb-4 mb-md-0">
           <img src="../asset/high-school-concept-illustration.png" class="img-fluid">
         </div>
         <div class="col-md-6">

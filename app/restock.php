@@ -1,5 +1,6 @@
 <?php
 require_once '../model/shop.php';
+include "sidebar.php";
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Kasir') {
   header("Location: loginUser.php");
@@ -17,11 +18,6 @@ $result  = getProdukMenipis();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #0d6efd;
-      color: white;
-    }
-
     nav.navbar {
       margin-bottom: 20px;
     }
@@ -112,7 +108,7 @@ $result  = getProdukMenipis();
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <div class="card shadow-sm h-100">
             <!-- Badge stok -->
-            <span class="badge <?= $row['Stock'] <= 1 ? 'bg-danger' : 'bg-warning' ?> stock-badge">
+            <span class="badge <?= $row['Stock'] == 0 ? 'bg-danger' : 'bg-warning' ?> stock-badge">
               <?= $row['Stock'] >= 1 ? 'Stcok Menipis' : 'Stok Habis' ?>
             </span>
 

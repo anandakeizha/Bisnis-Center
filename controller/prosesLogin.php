@@ -17,26 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['idAkun'] = $akun['idAkun'];
         $_SESSION['username'] = $akun['Username'];
         $_SESSION['role'] = $akun['Role'];
-        $_SESSION['email'] = $akun['Email'];
         $_SESSION['idUser'] = $akun['ID'] ?? null;
 
-        if($akun['Role'] == "User"){
+        if($akun['Role'] == 'Admin'){
             echo "<script>
-                    alert('Login berhasil!');
-                    window.location.href = '../app/dashboard.php';
-                </script>";
-        }elseif($akun['Role'] ===  "Admin" || $akun['Role'] === "Kasir"){
-            echo "<script>
-                    alert('Login berhasil!');
-                    window.location.href = '../app/dashboardAdmin.php';
-                </script>";
-        }else{
-            echo "<script>
-                alert('Login gagal. Username atau password salah.');
-                window.history.back();
+                alert('Login berhasil!');
+                window.location.href = '../app/dashboardAdmin.php';
+              </script>";
+        }else if($akun['Role'] == 'Kasir'){
+             echo "<script>
+                alert('Login berhasil!');
+                window.location.href = '../app/dashboardKasir.php';
+              </script>";
+        }else if($akun['Role'] == 'User'){
+             echo "<script>
+                alert('Login berhasil!');
+                window.location.href = '../app/dashboard.php';
               </script>";
         }
-
     } else {
         echo "<script>
                 alert('Login gagal. Username atau password salah.');

@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (addPesan($kodeBarang,$pesan, $jumlah, $status)) {
         echo "<script>
                 alert('Item successfully added to cart!');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/restock.php';
               </script>";
     } else {
         echo "<script>

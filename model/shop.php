@@ -310,4 +310,39 @@
         $stmtStok->execute();
     }
 
+    function getTotalTransaksiUser($idUser) {
+        $conn = koneksi();
+        $query = "SELECT COUNT(*) as total_transaksi FROM pesanan WHERE id_User = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc()['total_transaksi'] ?? 0;
+    }
+
+    function getPengeluaranBulanIni($idUser) {
+        $conn = koneksi();
+        $query = "SELECT SUM(total) as total_bulan FROM pesanan
+                WHERE id_User = ? AND MONTH(tanggal) = MONTH(CURDATE()) AND YEAR(tanggal) = YEAR(CURDATE())";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc()['total_bulan'] ?? 0;
+    }
+
+    function getProdukFavoritUser($idUser) {
+        $conn = koneksi();
+        $query = "SELECT b.NamaBarang AS nama_produk, SUM(dt.jumlah) AS jumlah 
+                FROM detailpesanan dt 
+                JOIN pesanan t ON dt.idPesanan = t.ID 
+                JOIN barang b ON dt.KodeBarang = b.KodeBarang
+                WHERE t.id_User = ?
+                GROUP BY dt.KodeBarang
+                ORDER BY jumlah DESC 
+                LIMIT 1";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
 ?>

@@ -1,6 +1,7 @@
 <?php
 require_once '../model/shop.php';
-session_start();
+include 'sidebar.php';
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'User') {
   header("Location: loginUser.php");
   exit;
@@ -20,8 +21,7 @@ $result  = getProduk();
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <style>
     body {
-      background-color: #0d6efd;
-      color: white;
+      background-color: white;
     }
 
     nav.navbar {
@@ -107,7 +107,7 @@ $result  = getProduk();
     }
   </style>
 </head>
-<body class="mb-2 bg-primary text-white">
+<body>
   <div class="container py-4">
     <h2 class="text-center fw-bold mb-4">Our Shop</h2>
     <div class="row g-4">

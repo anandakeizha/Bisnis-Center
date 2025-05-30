@@ -18,7 +18,7 @@ if (isset($_POST['tambah'])) {
 
     echo "<script>
                 alert('Berhasil Tambah User');
-                window.location.href = '../app/dashboard.php';
+                window.location.href = '../app/akunUser.php';
               </script>";
     exit;
 }
@@ -38,7 +38,7 @@ if (isset($_POST['edit'])) {
 
     echo "<script>
             alert('Berhasil Edit User');
-            window.location.href = '../app/dashboard.php';
+            window.location.href = '../app/akunUser.php';
           </script>";
     exit;
 }
@@ -50,7 +50,7 @@ if (isset($_GET['hapus'])) {
 
     echo "<script>
             alert('Berhasil Delete User');
-            window.location.href = '../app/dashboard.php';
+            window.location.href = '../app/akunUser.php';
           </script>";
     exit;
 }

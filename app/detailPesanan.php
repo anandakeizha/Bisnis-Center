@@ -1,11 +1,11 @@
 <?php
 session_start();
-if (!isset($_SESSION['role'])) {
+if (!isset($_SESSION['username'])) {
     header("Location: loginUser.php");
     exit;
 }
 
-if($_SESSION['role'] == "user"):
+if($_SESSION['role'] != "Admin"):
   header("Location: loginUser.php");
 endif;
 include "sidebar.php";

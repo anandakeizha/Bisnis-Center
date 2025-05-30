@@ -1,14 +1,10 @@
 <?php
+include "sidebar.php";
 require_once '../model/barang.php';
 
-if(!isset($_SESSION['role'])){
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
     header("Location: loginUser.php");
-    exit();
-}
-
-if (!isset($_SESSION['username']) || $_SESSION['role'] === 'Admin') {
-  header("Location: loginUser.php");
-  exit;
+    exit;
 }
 $dataBarang = getAllBarang();
 ?>
@@ -16,10 +12,14 @@ $dataBarang = getAllBarang();
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kelola Barang</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
 </head>
 <body>
 <div class="container mt-4">
@@ -31,7 +31,7 @@ $dataBarang = getAllBarang();
 
     <!-- Tabel Responsif -->
     <div class="table-responsive">
-        <table  id="tabelBarang" class="table table-bordered table-striped align-middle">
+        <table id="tabelBarang" class="table table-bordered table-striped align-middle">
             <thead class="table-secondary text-center">
                 <tr>
                     <th>Nama Barang</th>
@@ -42,24 +42,24 @@ $dataBarang = getAllBarang();
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $dataBarang->fetch_assoc()): ?>
+            <?php while ($row = $dataBarang->fetch_assoc()): ?>
                 <tr>
                     <td><?= htmlspecialchars($row['NamaBarang']) ?></td>
                     <td><img src="data:image/jpeg;base64,<?= base64_encode($row['gambar']) ?>" class="img-fluid" style="max-width: 100px;"></td>
                     <td><?= $row['Stock'] ?></td>
-                    <td>Rp <?= number_format($row['HargaBarang']) ?></td>
+                    <td>Rp <?= number_format($row['HargaBarang'], 0, ',', '.') ?></td>
                     <td class="text-nowrap">
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditBarang<?= $row['KodeBarang'] ?>">Edit</button>
                         <a href="../controller/barang.php?hapus=<?= $row['KodeBarang'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                     </td>
                 </tr>
-                <?php endwhile; ?>
+            <?php endwhile; ?>
             </tbody>
         </table>
     </div>
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="modalTambahBarang" tabindex="-1">
+    <div class="modal fade" id="modalTambahBarang" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="post" enctype="multipart/form-data" action="../controller/barang.php" class="modal-content">
                 <div class="modal-header">
@@ -70,7 +70,6 @@ $dataBarang = getAllBarang();
                     <div class="mb-3"><label>Kode Barang</label><input type="text" name="kodeBarang" class="form-control" maxlength="10" required></div>
                     <div class="mb-3"><label>Nama Barang</label><input type="text" name="nama" class="form-control" required></div>
                     <div class="mb-3"><label>Gambar</label><input type="file" name="gambar" class="form-control" accept="image/*" required></div>
-                    <div class="mb-3"><label>Stock</label><input type="number" name="stock" class="form-control" required></div>
                     <div class="mb-3"><label>Harga</label><input type="number" name="harga" class="form-control" required></div>
                 </div>
                 <div class="modal-footer">
@@ -85,7 +84,7 @@ $dataBarang = getAllBarang();
     $dataBarang->data_seek(0);
     while ($row = $dataBarang->fetch_assoc()):
     ?>
-    <div class="modal fade" id="modalEditBarang<?= $row['KodeBarang'] ?>" tabindex="-1">
+    <div class="modal fade" id="modalEditBarang<?= $row['KodeBarang'] ?>" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="post" enctype="multipart/form-data" action="../controller/barang.php" class="modal-content">
                 <div class="modal-header">
@@ -96,7 +95,6 @@ $dataBarang = getAllBarang();
                     <input type="hidden" name="id" value="<?= $row['KodeBarang'] ?>">
                     <div class="mb-3"><label>Nama Barang</label><input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($row['NamaBarang']) ?>" required></div>
                     <div class="mb-3"><label>Gambar (kosongkan jika tidak diubah)</label><input type="file" name="gambar" class="form-control" accept="image/*"></div>
-                    <div class="mb-3"><label>Stock</label><input type="number" name="stock" class="form-control" value="<?= $row['Stock'] ?>" required></div>
                     <div class="mb-3"><label>Harga</label><input type="number" name="harga" class="form-control" value="<?= $row['HargaBarang'] ?>" required></div>
                 </div>
                 <div class="modal-footer">
@@ -108,10 +106,9 @@ $dataBarang = getAllBarang();
     <?php endwhile; ?>
 </div>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- jQuery (DataTables requirement) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 

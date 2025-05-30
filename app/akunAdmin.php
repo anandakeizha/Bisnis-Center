@@ -6,7 +6,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
   header("Location: loginUser.php");
   exit;
 }
-$dataAkun = getAllAkunKasir();
+$dataAkun = getAllAkunAdmin();
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +50,7 @@ $dataAkun = getAllAkunKasir();
                     <td><?= htmlspecialchars($row['Role']) ?></td>
                     <td class="text-nowrap">
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditAkun<?= $row['ID'] ?>">Edit</button>
-                        <a href="../controller/akun.php?hapus=<?= $row['ID'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus akun ini?')">Hapus</a>
+                        <a href="../controller/akunAdmin.php?hapus=<?= $row['ID'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus akun ini?')">Hapus</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
@@ -61,7 +61,7 @@ $dataAkun = getAllAkunKasir();
     <!-- Modal Tambah -->
     <div class="modal fade" id="modalTambahAkun" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="post" action="../controller/akun.php" class="modal-content">
+            <form method="post" action="../controller/akunAdmin.php" class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Akun</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -87,7 +87,7 @@ $dataAkun = getAllAkunKasir();
     ?>
     <div class="modal fade" id="modalEditAkun<?= $row['ID'] ?>" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="post" action="../controller/akun.php" class="modal-content">
+            <form method="post" action="../controller/akunAdmin.php" class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Akun</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

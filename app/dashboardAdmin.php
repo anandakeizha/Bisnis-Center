@@ -1,141 +1,230 @@
 <?php
-session_start();
-if (!isset($_SESSION['role'])) {
-  header("Location: loginUser.php");
-  exit;
-}
-
-if($_SESSION['role'] == "User"){
-  header("Location: loginUser.php");
-  exit;
-}
-
 include "sidebar.php";
-include "../koneksi/koneksi.php";
-include "../controller/akun.php";
-?>
 
-<?php
-$koneksi = koneksi();
-$query_total = mysqli_query($koneksi, "SELECT SUM(Total) as total_pendapatan FROM pesanan");
-$data_total = mysqli_fetch_assoc($query_total);
-$total_pendapatan = $data_total['total_pendapatan'] ?? 0;
-?>
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Admin') {
+  header("Location: loginUser.php");
+  exit;
+}
 
-<?php
-$tanggal_hari_ini = date('Y-m-d');
-$query_harian = mysqli_query($koneksi, "
-    SELECT SUM(Total) as total_hari_ini
-    FROM pesanan
-    WHERE DATE(Tanggal) = '$tanggal_hari_ini'
-");
-$data_harian = mysqli_fetch_assoc($query_harian);
-$total_hari_ini = $data_harian['total_hari_ini'] ?? 0;
-?>
+$conn = koneksi();
+$start = $_GET['start'] ?? '';
+$end = $_GET['end'] ?? '';
+$data = [];
+if ($start && $end) {
+    $startFormatted = mysqli_real_escape_string($conn, $start . " 00:00:00");
+    $endFormatted = mysqli_real_escape_string($conn, $end . " 23:59:59");
+    $query = "
+        SELECT b.namaBarang, SUM(dp.Jumlah) as total_terjual
+        FROM detailpesanan dp
+        JOIN barang b ON dp.KodeBarang = b.KodeBarang
+        JOIN pesanan p ON dp.idPesanan = p.id
+        WHERE p.status = 'Accept'
+        AND p.tanggal BETWEEN '$startFormatted' AND '$endFormatted'
+        GROUP BY b.namaBarang
+    ";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[$row['namaBarang']] = (int)$row['total_terjual'];
+    }
+}
+$labels = json_encode(array_keys($data));
+$values = json_encode(array_values($data));
 
-<?php
-$query_stok = mysqli_query($koneksi, "SELECT COUNT(*) as stok_habis FROM barang WHERE Stock = 0");
-$data_stok = mysqli_fetch_assoc($query_stok);
-$stok_habis = $data_stok['stok_habis'] ?? 0;
+require_once '../model/barang.php';
+$jumlahKosong = getBarangKosong();
+$totalHariIni = getTotalHariIni();
+$totalKeseluruhan = getTotalKeseluruhan();
+
+$pesanPending = getPesanPending();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if(isset($_POST['Aksi'])){
+      $id = $_POST['id'];
+      $action = $_POST['Aksi'];
+
+      if ($action == 'Confirm') {
+          $status = 'Confirm';
+          echo "<script>
+                  alert('Pesanan di Setujui!');
+                  window.location.href = 'dashboardAdmin.php';
+                </script>";
+      } elseif ($action == 'Cancel') {
+          $status = 'Cancel';
+          echo "<script>
+                  alert('Pesanan diTolak!');
+                  window.location.href = 'dashboardAdmin.php';
+                </script>";
+      } else {
+          $status = null;
+      }
+
+      if ($status !== null) {
+          // Update status pesanan
+          getUbahStatusPesan($id, $status);
+
+          // Jika statusnya Accept, kurangi stok
+          if ($status === 'Confirm') {
+              TambahStok($id);
+          }
+      }
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="content">
-    <h1>Dashboard</h1>
-    <p>Dashboard detail Bisnis Center.</p>
-    <div class="row mt-4">
-        <div class="col-md-4 mb-4">
-          <div class="card shadow border border-0" style="width: 450px; height: 150px">
-            <div class="card-body">
-              <h5 style="text-align: left;"><i class="bi bi-currency-dollar"></i> Total Pendapatan</h5>
-              <h3 class="mt-4 ms-1">Rp <?= number_format($total_pendapatan, 0, ',', '.') ?></h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="card shadow border border-0" style="width: 450px; height: 150px">
-            <div class="card-body">
-              <h5 style="text-align: left;"><i class="bi bi-wallet me-2"></i> Total Pendapatan hari ini</h5>
-              <h3 class="mt-4 ms-1">Rp <?= number_format($total_hari_ini, 0, ',', '.') ?></h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="card shadow border border-0" style="width: 450px; height: 150px">
-            <div class="card-body">
-              <h5 style="text-align: left;"><i class="bi bi-box-seam-fill me-2"></i>  Stok Habis</h5>
-              <h3 class="mt-4 ms-1"><?= $stok_habis ?> Barang</h3>
-            </div>
-          </div>
+<div class="container-fluid mt-4">
+  <br>
+
+  <!-- Row 1 -->
+  <div class="row mt-4">
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5><i class="bi bi-currency-dollar me-2"></i> Total Revenue</h5>
+          <h3 class="text-primary">Rp <?= number_format($totalKeseluruhan, 0, ',', '.') ?></h3>
         </div>
       </div>
-      <div class="row mt-2">
-        <div class="col-md-6 mb-4">
-          <div class="card shadow border border-0" style="width: 685px; height: 400px">
-            <div class="card-body">
-            <h5 style="text-align: left;"><i class="bi bi-pie-chart-fill me-2"></i>  Produk Terlaris</h5>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card shadow border border-0" style="width: 685px; height: 400px">
-            <div class="card-body">
-            <h5 style="text-align: left;"><i class="bi bi-bar-chart-fill"></i>  Grafik Penjualan</h5>
-            </div>
-          </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5><i class="bi bi-wallet me-2"></i> Pendapatan hari ini</h5>
+          <h3 class="text-success">Rp <?= number_format($totalHariIni, 0, ',', '.') ?></h3>
         </div>
       </div>
-      <div class="row mt-2">
-        <div class="col-md-6 mb-4">
-          <div class="card shadow border border-0" style="width: 1400px; height: 240px">
-            <div class="card-body">
-              <h5 style="text-align: left;"><i class="bi bi-cash-coin me-4"></i> Riwayat Pesanan</h5>
-              <table class="table table-hover">
-                <tr>
-                  <td>ID</td>
-                  <td>Nama</td>
-                  <td>Status</td>
-                  <td>Total</td>
-                  <td>Tanggal</td>
-                </tr>
-                <?php
-                  $koneksi = koneksi();
-                  $tanggal_hari_ini = date('Y-m-d');
-                  $sql = "SELECT pesanan.ID, user.Nama, pesanan.Total, pesanan.Status, pesanan.Tanggal
-                        FROM pesanan
-                        JOIN user ON user.ID = pesanan.Id_User
-                        WHERE DATE(Tanggal) = '$tanggal_hari_ini'";
-                  $hasil = mysqli_query($koneksi, $sql);
-                  if (!$hasil) {
-                    echo "<tr><td colspan='5'>Query Error: " . mysqli_error($koneksi) . "</td></tr>";
-                  } elseif (mysqli_num_rows($hasil) > 0) {
-                    while ($row = mysqli_fetch_assoc($hasil)) {
-                    echo "<tr>";
-                    echo "<td>" . $row['ID'] . "</td>";
-                    echo "<td>" . $row['Nama'] . "</td>";
-                    echo "<td>" . $row['Total'] . "</td>";
-                    echo "<td>" . $row['Status'] . "</td>";
-                    echo "<td>" . $row['Tanggal'] . "</td>";
-                    echo "</tr>";
-                  }
-                  } else {
-                    echo "<tr><td colspan='5'>Tidak ada data</td></tr>";
-                  }
-                ?>
-              </table>
-              </div>
-          </div>
+    </div>
+    <div class="col-lg-4 col-md-12 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h5><i class="bi bi-box-seam-fill me-2"></i> Barang Habis</h5>
+          <h3 class="mt-3"><?= $jumlahKosong ?></h3>
         </div>
+      </div>
+    </div>
   </div>
+
+  <div class="row mt-2">
+    <div class="col-12 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h4 class="mb-3 text-primary">Daftar Pesan Pending</h4>
+
+          <?php while ($row = $pesanPending->fetch_assoc()): ?>
+            <div class="card shadow-sm mb-3">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-md-8 mb-3 mb-md-0 text-break">
+                    <span class="badge bg-primary me-2">#<?= htmlspecialchars($row['ID']) ?></span>
+                    <span class="text-dark"><?= htmlspecialchars($row['Pesan']) ?></span>
+                  </div>
+                  <div class="col-md-4 text-md-end">
+                    <form method="POST" class="d-inline">
+                      <input type="hidden" name="id" value="<?= htmlspecialchars($row['ID']) ?>">
+                      <button type="submit" name="Aksi" value="Confirm" class="btn btn-success btn-sm me-2 mb-1">
+                        <i class="bi bi-check-circle"></i> Accept
+                      </button>
+                    </form>
+
+                    <form method="POST" class="d-inline">
+                      <input type="hidden" name="id" value="<?= htmlspecialchars($row['ID']) ?>">
+                      <button type="submit" name="Aksi" value="Cancel" class="btn btn-danger btn-sm mb-1">
+                        <i class="bi bi-x-circle"></i> Cancel
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endwhile; ?>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Row Grafik Penjualan -->
+  <div class="row mt-2">
+    <div class="col-12 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-body">
+          <h4 class="text-center">Diagram Batang Laporan Penjualan</h4>
+          <form method="GET" class="row g-3 justify-content-center mb-4">
+            <div class="col-md-4">
+              <label class="form-label">Dari:</label>
+              <input type="date" name="start" value="<?= htmlspecialchars($start) ?>" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Sampai:</label>
+              <input type="date" name="end" value="<?= htmlspecialchars($end) ?>" class="form-control">
+            </div>
+            <div class="col-md-2 align-self-end">
+              <button type="submit" class="btn btn-primary w-100">Tampilkan</button>
+            </div>
+          </form>
+
+          <?php if ($start && $end): ?>
+            <div style="height: 400px;">
+              <canvas id="penjualanChart"></canvas>
+            </div>
+            <script>
+              const ctx = document.getElementById('penjualanChart').getContext('2d');
+              new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: <?= $labels ?>,
+                  datasets: [{
+                    label: 'Jumlah Terjual',
+                    data: <?= $values ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      title: {
+                        display: true,
+                        text: 'Jumlah'
+                      }
+                    },
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Produk'
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: true
+                    }
+                  }
+                }
+              });
+            </script>
+          <?php elseif ($_GET): ?>
+            <p class="text-danger text-center">Silakan pilih rentang tanggal yang lengkap untuk menampilkan data.</p>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

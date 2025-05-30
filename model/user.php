@@ -95,5 +95,17 @@
         return $stmt->execute();
     }
 
-    
+    function getAllAkunKasir() {
+        $conn = koneksi();
+        $sql = "SELECT ID, Username, Email, Telepon, Role FROM akun WHERE Role IN ('Kasir')";
+        return $conn->query($sql);
+    }
+
+    function getAllAkunAdmin() {
+        $conn = koneksi();
+        $sql = "SELECT ID, Username, Email, Telepon, Role FROM akun WHERE Role IN ('Admin')";
+        return $conn->query($sql);
+    }
+
+
 ?>
