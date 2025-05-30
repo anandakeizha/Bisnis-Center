@@ -69,9 +69,53 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
       height: 1.5rem;
     }
 
+    .sidebar {
+      transition: transform 0.3s ease;
+    }
+
+    #burgerBtn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1100;
+      width: 45px;
+      height: 45px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+
+
+    /* Di layar kecil, sidebar di geser keluar */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        background-color: #0d6efd;
+        transform: translateX(-100%);
+        z-index: 1051;
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+    }
+
+
   </style>
 </head>
 <body>
+
+<!-- Tombol burger yang hanya muncul di layar kecil -->
+<button id="burgerBtn" class="btn btn-primary d-md-none" type="button" aria-label="Toggle sidebar">
+  <i class="bi bi-list fs-3"></i>
+</button>
 
 <!-- Sidebar -->
 <div class="sidebar d-flex flex-column">
@@ -94,9 +138,9 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
           <i class="bi bi-file-person-fill me-2"></i> Data Akun
         </a>
         <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="akunAdmin.php">Admin</a></li>
           <li><a class="dropdown-item" href="akunUser.php">User</a></li>
           <li><a class="dropdown-item" href="akunKasir.php">Kasir</a></li>
-          <li><a class="dropdown-item" href="akunAdmin.php">Admin</a></li>
         </ul>
       </div>
     <?php elseif ($role == 'Kasir'): ?>
@@ -154,6 +198,14 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+  const burgerBtn = document.getElementById('burgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+
+  burgerBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+  });
+
   // Cart Sidebar Toggle
   const openCartBtn = document.getElementById('openCartBtn');
   const closeCartBtn = document.getElementById('closeCartBtn');
@@ -173,6 +225,7 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
   if (openCartBtn) openCartBtn.addEventListener('click', openCart);
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (overlay) overlay.addEventListener('click', closeCart);
+  
 </script>
 </body>
 </html>
