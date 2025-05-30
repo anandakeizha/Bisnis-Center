@@ -89,7 +89,7 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
     <?php if ($role == 'Admin'): ?>
       <li class="nav-item"><a href="dashboardAdmin.php" class="nav-link"><i class="bi bi-clipboard-data me-3"></i>Dashboard</a></li>
       <li><a href="dataBarang.php" class="nav-link"><i class="bi bi-box-seam-fill me-3"></i>Data Barang</a></li>
-      <li class="nav-item dropdown">
+      <div class="dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-file-person-fill me-2"></i> Data Akun
         </a>
@@ -98,7 +98,7 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
           <li><a class="dropdown-item" href="akunKasir.php">Kasir</a></li>
           <li><a class="dropdown-item" href="akunAdmin.php">Admin</a></li>
         </ul>
-      </li>
+      </div>
     <?php elseif ($role == 'Kasir'): ?>
       <li><a class="nav-link" href="dashboardKasir.php"><i class="bi bi-house me-3"></i>Home</a></li>
       <li><a class="nav-link" href="restock.php"><i class="bi bi-box-seam me-3"></i>Stock Menipis</a></li>
