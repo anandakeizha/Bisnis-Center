@@ -1,5 +1,5 @@
 <?php
-require_once'../model/shop.php';
+require_once '../model/shop.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -10,12 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (addPesan($kodeBarang,$pesan, $jumlah, $status)) {
         echo "<script>
-                alert('Item successfully added to cart!');
+                alert('Item successfully added to restock!');
                 window.location.href = '../app/restock.php';
               </script>";
     } else {
         echo "<script>
-                alert('Failed to add item to cart!');
+                alert('Failed to add item to restock!');
                 window.history.back();
               </script>";
     }
