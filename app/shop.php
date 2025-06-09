@@ -111,36 +111,64 @@ $result  = getProduk();
   <div class="container py-4">
     <h2 class="text-center fw-bold mb-4">Our Shop</h2>
     <div class="row g-4">
-      <?php while ($row = $result->fetch_assoc()): ?>
+      <?php while ($row = $result->fetch_assoc()):
+        $kodeBarang = $row['KodeBarang'];
+
+        // Hitung total jumlah di keranjang untuk produk ini
+        $queryCart = mysqli_query($conn, "SELECT SUM(Jumlah) AS totalCart FROM cart WHERE KodeBarang = '$kodeBarang'");
+        $dataCart = mysqli_fetch_assoc($queryCart);
+        $totalCart = $dataCart['totalCart'] ?? 0;
+
+        // Hitung total jumlah di pesanan belum selesai untuk produk ini
+        $queryOrder = mysqli_query($conn, "
+        SELECT SUM(dp.Jumlah) AS totalPesanan
+        FROM detailpesanan dp
+        JOIN pesanan p ON dp.idPesanan = p.ID
+        WHERE dp.KodeBarang = '$kodeBarang'
+        AND p.Status != 'Accept'");
+        $dataOrder = mysqli_fetch_assoc($queryOrder);
+        $totalPesanan = $dataOrder['totalPesanan'] ?? 0;
+
+        // Hitung stok tersisa yang tersedia untuk ditambahkan ke keranjang
+        $stokTersedia = $row['Stock'] - $totalCart - $totalPesanan;
+        if ($stokTersedia < 0) $stokTersedia = 0;
+      ?>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <div class="card shadow-sm h-100">
             <!-- Badge stok -->
-            <span class="badge <?= $row['Stock'] > 0 ? 'bg-success' : 'bg-danger' ?> stock-badge">
-              <?= $row['Stock'] > 0 ? 'Tersedia' : 'Stok Habis' ?>
+            <span class="badge <?= $stokTersedia > 0 ? 'bg-success' : 'bg-danger' ?> stock-badge">
+              <?= $stokTersedia > 0 ? 'Tersedia' : 'Stok Habis' ?>
             </span>
 
             <img src="data:image/jpeg;base64,<?= base64_encode($row['gambar']) ?>"
                  class="card-img-top p-3"
                  style="height:200px; object-fit:contain;"
-                 alt="<?= $row['NamaBarang'] ?>">
+                 alt="<?= htmlspecialchars($row['NamaBarang']) ?>">
 
             <div class="card-body">
-              <h5 class="card-title text-primary"><?= $row['NamaBarang'] ?></h5>
+              <h5 class="card-title text-primary"><?= htmlspecialchars($row['NamaBarang']) ?></h5>
               <p class="card-text">Rp <?= number_format($row['HargaBarang'], 0, ',', '.') ?></p>
             </div>
 
-            <?php if ($role == 'User' && $row['Stock'] > 0): ?>
+            <?php if ($role == 'User' && $stokTersedia > 0): ?>
               <div class="card-hover">
                 <form action="../controller/addcart.php" method="post">
                   <input type="hidden" name="idUser" value="<?= $idUser ?>">
-                  <input type="hidden" name="kodeBarang" value="<?= $row['KodeBarang'] ?>">
+                  <input type="hidden" name="kodeBarang" value="<?= htmlspecialchars($row['KodeBarang']) ?>">
                   <div class="mb-2">
-                    <input type="number" name="jumlah" class="form-control form-control-sm" value="1" min="1" max="<?= $row['Stock'] ?>">
+                    <input type="number" name="jumlah" class="form-control form-control-sm"
+                      value="1" min="1" max="<?= $stokTersedia ?>" />
                   </div>
                   <button type="submit" class="btn btn-cart btn-sm w-100">
                     <i class="bi bi-cart-plus"></i> Add to Cart
                   </button>
                 </form>
+              </div>
+            <?php elseif ($role == 'User'): ?>
+              <div class="card-hover">
+                <button class="btn btn-secondary btn-sm w-100" disabled>
+                  Stok Habis
+                </button>
               </div>
             <?php endif; ?>
           </div>

@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $items = ($role == 'User') ? getCartItems($idUser) : null;
+
+$conn = koneksi();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -156,45 +158,116 @@ $items = ($role == 'User') ? getCartItems($idUser) : null;
 </div>
 
 <?php if ($role == 'User'): ?>
-<!-- Overlay and Cart Sidebar -->
+<?php
+  $idUser = $_SESSION['idUser']; // Pastikan sudah login dan ada session idUser
+  $adaYangMelebihiStok = false;
+
+  // Ambil seluruh keranjang milik user beserta stok dan data barang
+  $queryCart = mysqli_query($conn, "SELECT cart.*, barang.Stock, barang.gambar, barang.NamaBarang, barang.HargaBarang 
+                                    FROM cart 
+                                    JOIN barang ON cart.KodeBarang = barang.KodeBarang 
+                                    WHERE cart.IdUser = '$idUser'");
+
+  $cartItems = [];
+  while ($row = mysqli_fetch_assoc($queryCart)) {
+    $kodeBarang = $row['KodeBarang'];
+
+    // Hitung total jumlah di keranjang untuk produk ini (user ini)
+    $jumlahCart = $row['Jumlah'];
+
+    // Hitung total jumlah di pesanan belum selesai untuk produk ini
+    $queryOrder = mysqli_query($conn, "
+      SELECT SUM(dp.Jumlah) AS totalPesanan
+      FROM detailpesanan dp
+      JOIN pesanan p ON dp.idPesanan = p.ID
+      WHERE dp.KodeBarang = '$kodeBarang'
+      AND p.Status != 'Accept'");
+    $dataOrder = mysqli_fetch_assoc($queryOrder);
+    $totalPesanan = $dataOrder['totalPesanan'] ?? 0;
+
+    // Hitung stok tersisa yang tersedia untuk ditambahkan ke keranjang
+    $stokTersedia = $row['Stock'] - $totalPesanan;
+
+    // Pastikan stok tersisa minimal 0
+    if ($stokTersedia < 0) $stokTersedia = 0;
+
+    // Cek apakah jumlah melebihi stok tersisa (stok sudah habis)
+    if ($jumlahCart > $stokTersedia) {
+      $adaYangMelebihiStok = true;
+    }
+
+    // Simpan data stok tersisa dan jumlahCart untuk tombol plus/minus nanti
+    $row['stokTersedia'] = $stokTersedia;
+    $cartItems[] = $row;
+  }
+?>
+
+<!-- Sidebar Cart -->
 <div id="overlay" tabindex="-1"></div>
 <div id="cartSidebar" role="dialog" aria-modal="true" aria-hidden="true">
   <h3 id="cartTitle">Keranjang Belanja Anda
     <button id="closeCartBtn" class="btn-close float-end" aria-label="Tutup keranjang"></button>
   </h3>
   <div id="cartItems">
-    <?php if ($items->num_rows === 0): ?>
+    <?php if (empty($cartItems)): ?>
       <p>Keranjang kosong.</p>
     <?php else: ?>
-      <?php while ($row = $items->fetch_assoc()): ?>
+      <?php foreach ($cartItems as $item): ?>
+        <?php
+          $kodeBarang = $item['KodeBarang'];
+          $jumlah = $item['Jumlah'];
+          $stokTersedia = $item['stokTersedia'];
+          $totalHarga = $jumlah * $item['HargaBarang'];
+
+          // Tombol plus disable jika stok tersisa <= 0 atau jumlah sudah sama dengan stok tersisa
+          $disablePlus = ($stokTersedia <= 0 || $jumlah >= $stokTersedia);
+
+          // Tombol minus disable jika jumlah <= 1 (gak boleh kurang dari 1)
+          $disableMinus = ($jumlah <= 1);
+        ?>
         <div class="card mb-3 border-0 shadow-sm">
           <div class="row g-0">
-            <div class="col-4"><img src="data:image/jpeg;base64,<?= base64_encode($row['gambar']) ?>" class="cart-item-img" alt="<?= htmlspecialchars($row['NamaBarang']) ?>"></div>
+            <div class="col-4">
+              <img src="data:image/jpeg;base64,<?= base64_encode($item['gambar']) ?>" class="cart-item-img" alt="<?= htmlspecialchars($item['NamaBarang']) ?>">
+            </div>
             <div class="col-8">
               <div class="card-body p-2">
-                <h6 class="card-title"><?= htmlspecialchars($row['NamaBarang']) ?></h6>
-                <p class="text-success fw-bold">Rp<?= number_format($row['TotalHarga']) ?></p>
+                <h6 class="card-title"><?= htmlspecialchars($item['NamaBarang']) ?></h6>
+                <p class="text-success fw-bold">Rp<?= number_format($totalHarga) ?></p>
+
                 <form method="POST" class="d-flex align-items-center quantity-controls mb-2" style="gap: 0.5rem;">
-                  <input type="hidden" name="kodeBarang" value="<?= $row['KodeBarang'] ?>">
-                  <input type="hidden" name="jumlah" value="<?= $row['Jumlah'] ?>">
-                  <button type="submit" name="update" value="minus" class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></button>
-                  <span><?= $row['Jumlah'] ?></span>
-                  <button type="submit" name="update" value="plus" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></button>
+                  <input type="hidden" name="kodeBarang" value="<?= $kodeBarang ?>">
+                  <input type="hidden" name="jumlah" value="<?= $jumlah ?>">
+
+                  <button type="submit" name="update" value="minus" class="btn btn-outline-secondary btn-sm" <?= $disableMinus ? 'disabled' : '' ?>>
+                    <i class="bi bi-dash"></i>
+                  </button>
+
+                  <span><?= $jumlah ?></span>
+
+                  <button type="submit" name="update" value="plus" class="btn btn-outline-secondary btn-sm" <?= $disablePlus ? 'disabled' : '' ?>>
+                    <i class="bi bi-plus"></i>
+                  </button>
                 </form>
+
                 <form method="POST">
-                  <input type="hidden" name="kodeBarang" value="<?= $row['KodeBarang'] ?>">
+                  <input type="hidden" name="kodeBarang" value="<?= $kodeBarang ?>">
                   <button type="submit" name="delete" value="delete" class="btn btn-danger btn-sm w-100">Hapus</button>
                 </form>
               </div>
             </div>
           </div>
         </div>
-      <?php endwhile; ?>
+      <?php endforeach; ?>
     <?php endif; ?>
   </div>
-  <a href="../controller/checkout.php" class="btn btn-primary btn-lg w-100 mt-3">Checkout</a>
+
+  <!-- Tombol checkout disable jika ada jumlah di keranjang yang melebihi stok -->
+  <a href="../controller/checkout.php" class="btn btn-primary btn-lg w-100 mt-3 <?= $adaYangMelebihiStok ? 'disabled' : '' ?>">Checkout</a>
 </div>
 <?php endif; ?>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 <script>
